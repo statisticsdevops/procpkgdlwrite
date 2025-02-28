@@ -1,0 +1,73 @@
+name: Python Linux Setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Create virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+
+    - name: Force reinstall pip
+      run: |
+        source venv/bin/activate
+        python -m pip install --upgrade pip
+
+    - name: Install required packages
+      run: |
+        source venv/bin/activate
+        pip install pandas
+        pip install openpyxl
+        pip install pipdeptree
+
+    - name: Split requirements based on users
+      run: |
+        source venv/bin/activate
+        python ./genpylinuxreq.py
+
+    - name: Download packages dynamically based on user directories
+      run: |
+        source venv/bin/activate
+        mkdir -p wheelhouse
+
+        for userDir in */ ; do
+          if [ -d "$userDir" ]; then
+            requirementsFile="$userDir/requirements_pylinux.txt"
+            if [ -f "$requirementsFile" ]; then
+              echo "Processing $userDir's packages..."
+              
+              # Step 7a: Use pipdeptree to identify the full dependency tree for the packages
+              echo "Generating dependency tree for $userDir..."
+              pip install -r "$requirementsFile"
+              pipdeptree --freeze > "$userDir/dependency_tree.txt"
+
+              # Step 7b: Download packages and their dependencies using pip
+              echo "Downloading packages for $userDir..."
+              pip download -r "$requirementsFile" --dest=wheelhouse
+              # Download the dependencies
+              pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse
+            fi
+          fi
+        done
+
+    - name: Upload wheelhouse
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-packages
+        path: wheelhouse/
