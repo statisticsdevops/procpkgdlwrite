@@ -1,0 +1,72 @@
+name: Python Windows Setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Create virtual environment
+      run: |
+        if (Test-Path venv) {
+          Remove-Item -Recurse -Force venv
+        }
+        python -m venv venv
+        .\venv\Scripts\activate
+
+    - name: Force reinstall pip
+      run: |
+        .\venv\Scripts\activate
+        python -m pip install --upgrade pip
+
+    - name: Install required packages
+      run: |
+        .\venv\Scripts\activate
+        pip install pandas
+        pip install openpyxl
+        pip install pipdeptree
+
+    - name: Split requirements based on users
+      run: |
+        .\venv\Scripts\activate
+        python ./genpylocalreq.py
+
+    - name: Download packages dynamically based on user directories
+      run: |
+        .\venv\Scripts\activate
+        mkdir wheelhouse
+
+        foreach ($userDir in Get-ChildItem -Directory) {
+          $requirementsFile = "$userDir/requirements_py.txt"
+          if (Test-Path $requirementsFile) {
+            echo "Processing $userDir's packages..."
+            
+            echo "Generating dependency tree for $userDir..."
+            pip install -r $requirementsFile
+            pipdeptree --freeze > "$userDir/dependency_tree.txt"
+
+            echo "Downloading packages for $userDir..."
+            pip download -r $requirementsFile --dest=wheelhouse
+            # Download the dependencies
+            pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse
+          }
+        }
+
+    - name: Upload wheelhouse
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-packages
+        path: wheelhouse/
