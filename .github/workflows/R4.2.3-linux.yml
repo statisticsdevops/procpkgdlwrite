@@ -52,5 +52,5 @@ jobs:
     - name: Upload R packages
       uses: actions/upload-artifact@v4
       with:
-        name: r-packages
+        name: r-linux-packages
         path: r_packages/
