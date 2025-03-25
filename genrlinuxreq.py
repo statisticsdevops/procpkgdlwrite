@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 
-excel_file = 'Rlinux_processed.xlsx'
-df = pd.read_excel(excel_file)
+excel_file = 'Rlinux_processed.csv'
+df = pd.read_csv(excel_file)
 
 user_packages = {}
 
