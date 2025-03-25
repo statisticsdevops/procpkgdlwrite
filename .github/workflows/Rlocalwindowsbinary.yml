@@ -60,7 +60,7 @@ jobs:
           $requirementsFile = "$($userDir.FullName)/requirements_rlocal.txt" -replace '\\', '/'
           if (Test-Path $requirementsFile) {
             echo "Processing $($userDir.FullName)'s R packages..."
-            Rscript -e "packages <- scan('$requirementsFile', what='', sep=''); deps <- tools::package_dependencies(packages, available.packages(), which=c('Depends', 'Imports', 'LinkingTo'), recursive=TRUE); all_packages <- unique(c(packages, unlist(deps))); download.packages(all_packages, destdir='r_packages', type='binary')"
+            Rscript -e "packages <- scan('$requirementsFile', what='', sep=''); deps <- tools::package_dependencies(packages, available.packages(), which=c('Depends', 'Imports', 'LinkingTo'), recursive=TRUE); all_packages <- unique(c(packages, unlist(deps))); download.packages(all_packages, destdir='r_packages', type='win.binary')"
           }
         }
 
