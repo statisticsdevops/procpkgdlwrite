@@ -39,13 +39,13 @@ jobs:
 
     - name: Download R packages dynamically
       run: |
-        mkdir -p r_packages
+        mkdir -p r_linux_packages
         
         for userDir in $(find . -type d -mindepth 1 -maxdepth 1); do
           requirementsFile="$userDir/requirements_rlinux.txt"
           if [ -f "$requirementsFile" ]; then
             echo "Processing $userDir's R packages..."
-            Rscript -e "packages <- scan('$requirementsFile', what='', sep=''); deps <- tools::package_dependencies(packages, available.packages(), which=c('Depends', 'Imports', 'LinkingTo'), recursive=TRUE); all_packages <- unique(c(packages, unlist(deps))); download.packages(all_packages, destdir='r_packages', type='source')"
+            Rscript -e "packages <- scan('$requirementsFile', what='', sep=''); deps <- tools::package_dependencies(packages, available.packages(), which=c('Depends', 'Imports', 'LinkingTo'), recursive=TRUE); all_packages <- unique(c(packages, unlist(deps))); download.packages(all_packages, destdir='r_linux_packages', type='source')"
           fi
         done
 
@@ -53,4 +53,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: r-linux-packages
-        path: r_packages/
+        path: r_linux_packages/
