@@ -1,8 +1,7 @@
 ﻿Package,User
 geopy,A
-llama-cppy-python==0.3.2,B
-fmmap==2.0.0,C
-pandoc,D
-buckaroo,E
-Office365-REST-Python-Client,F
-shareplum,G
+fmmap==2.0.0,B
+pandoc,C
+buckaroo,D
+Office365-REST-Python-Client,E
+shareplum,F
