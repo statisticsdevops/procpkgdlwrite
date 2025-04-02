@@ -1,7 +1,2 @@
 ﻿Package,User
-geopy,A
-fmmap==2.0.0,B
-pandoc,C
-buckaroo,D
-Office365-REST-Python-Client,E
-shareplum,F
+llama-cpp-python==0.3.2,A
