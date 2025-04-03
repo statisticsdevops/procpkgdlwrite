@@ -1,2 +1,9 @@
 ﻿Package,User
 fireducks==1.2.5,A
+geopy,B
+llama-cpp-python==0.3.2,C
+fmmap==2.0.0,D
+pandoc,E
+buckaroo,F
+Office365-REST-Python-Client,G
+shareplum,H
