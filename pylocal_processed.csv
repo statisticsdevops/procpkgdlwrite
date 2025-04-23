@@ -1,8 +1,7 @@
-﻿Package,User
-geopy,A
-llama-cpp-python==0.3.2,B
-fmmap==2.0.0,C
-pandoc,D
-buckaroo,E
-Office365-REST-Python-Client,F
-shareplum,G
+Package,User
+reportlab,A
+ortools,B
+polars>=0.20.5,C
+nmslib,D
+pydanticai,E
+
