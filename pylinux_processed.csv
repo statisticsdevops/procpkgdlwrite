@@ -3,4 +3,4 @@ reportlab,A
 ortools,B
 polars>=0.20.5,C
 nmslib,D
-pydanticai,E
+pydantic-ai,E
