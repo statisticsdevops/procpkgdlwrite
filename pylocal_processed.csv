@@ -2,6 +2,5 @@ Package,User
 reportlab,A
 ortools,B
 polars>=0.20.5,C
-nmslib,D
-pydantic-ai,E
+pydantic-ai,D
 
