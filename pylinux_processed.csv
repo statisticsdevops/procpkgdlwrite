@@ -1,2 +1,8 @@
 ﻿Package,User
-nmslib,A
+fireducks==1.2.5,A
+reportlab,B
+ortools,C
+polars,D
+pydantic-ai,E
+apache-airflow,F
+altair>=5.4.0,G
