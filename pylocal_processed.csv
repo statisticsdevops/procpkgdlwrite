@@ -1,6 +1,9 @@
 Package,User
-reportlab,A
-ortools,B
-polars>=0.20.5,C
-pydantic-ai,D
+fireducks==1.2.5,A
+reportlab,B
+ortools,C
+polars,D
+pydantic-ai,E
+apache-airflow,F
+altair>=5.4.0,G
 
