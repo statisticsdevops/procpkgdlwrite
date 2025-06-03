@@ -1,8 +1,5 @@
 Package,User
-reportlab,A
-ortools,B
-polars,C
-pydantic-ai,D
-apache-airflow,E
-altair>=5.4.0,F
+tokenizers==0.21.1,A
+python-docx,B
+
 
