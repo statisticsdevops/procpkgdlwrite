@@ -1,8 +1,4 @@
 ﻿Package,User
-fireducks==1.2.5,A
-reportlab,B
-ortools,C
-polars,D
-pydantic-ai,E
-apache-airflow,F
-altair>=5.4.0,G
+google-re2,A
+tokenizers==0.21.1,B
+python-docx,C
