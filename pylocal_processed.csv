@@ -1,5 +1,4 @@
 Package,User
-tokenizers==0.21.1,A
-python-docx,B
+easyocr==1.1.4,A
 
 
