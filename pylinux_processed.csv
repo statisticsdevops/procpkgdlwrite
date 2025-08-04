@@ -1,2 +1,5 @@
 ﻿Package,User
-easyocr==1.1.4,A
+pandasGUI,A
+python-lsp-server,B
+jupyterlab-lsp,C
+
