@@ -2,9 +2,9 @@ Package,User
 diagrams==0.24.4,A
 qgridnext,B
 itables,C
-adbc_driver_oracle,D
-mermaid-python==0.1,E
-missforest,F
+mermaid-python==0.1,D
+missforest,E
+
 
 
 
