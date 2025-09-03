@@ -1,5 +1,9 @@
 ﻿Package,User
-pandasGUI,A
-python-lsp-server,B
-jupyterlab-lsp,C
+diagrams==0.24.4,A
+qgridnext,B
+itables,C
+adbc_driver_oracle,D
+mermaid-python==0.1,E
+missforest,F
+
 
