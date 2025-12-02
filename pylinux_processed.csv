@@ -2,7 +2,8 @@
 duckdb,A
 mermaid-python,B
 fastapi,C
-openai==2.8.3,D
+openai==2.8.1,D
+
 
 
 
