@@ -1,11 +1,8 @@
 ﻿Package,User
-polars,A
-leann,B
-great_tables,C
-pycountry,D
-pyvis,E
-pandera,F
-extract-msg,G
+duckdb,A
+mermaid-python,B
+fastapi,C
+openai==2.8.3,D
 
 
 
