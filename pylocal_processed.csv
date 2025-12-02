@@ -1,5 +1,9 @@
 Package,User
-leann,A
+duckdb,A
+mermaid-python,B
+fastapi,C
+openai==2.8.3,D
+
 
 
 
