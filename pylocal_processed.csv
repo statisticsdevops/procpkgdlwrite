@@ -1,8 +1,8 @@
 Package,User
-duckdb,A
-mermaid-python,B
-fastapi,C
-openai==2.8.1,D
+mkdocs,A
+mkdocs-awesome-pages-plugin,B
+mkdocs-material,C
+
 
 
 
