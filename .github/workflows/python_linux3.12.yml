@@ -1,4 +1,4 @@
-name: Python Linux Setup
+name: Python Linux 3.12 Setup
 
 on:
   workflow_dispatch:
