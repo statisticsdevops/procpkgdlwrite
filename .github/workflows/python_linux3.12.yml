@@ -50,17 +50,23 @@ jobs:
         for userDir in */ ; do
           if [ -d "$userDir" ]; then
             requirementsFile="$userDir/requirements_pylinux.txt"
+
             if [ -f "$requirementsFile" ]; then
               echo "Processing $userDir's packages..."
-              
+
+              echo "Installing packages individually for $userDir..."
+
+              while read pkg; do
+                if [ ! -z "$pkg" ]; then
+                  echo "Installing $pkg"
+                  pip install --no-deps "$pkg" || echo "$pkg failed (likely Python 3.12 incompatible)" >> failed_packages.txt
+                fi
+              done < "$requirementsFile"
+
               echo "Generating dependency tree for $userDir..."
-
-              pip install -r "$requirementsFile" || echo "$requirementsFile install failed (likely Python 3.12 incompatible)" >> failed_packages.txt
-
               pipdeptree --freeze > "$userDir/dependency_tree.txt" || true
 
               echo "Downloading packages for $userDir..."
-
               pip download -r "$requirementsFile" --dest=wheelhouse || echo "$requirementsFile download failed" >> failed_packages.txt
 
               pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse || echo "$userDir dependency download failed" >> failed_packages.txt
@@ -73,3 +79,9 @@ jobs:
       with:
         name: python-linux-packages
         path: wheelhouse/
+
+    - name: Upload failed packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-packages
+        path: failed_packages.txt
