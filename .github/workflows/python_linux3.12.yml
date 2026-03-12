@@ -54,8 +54,7 @@ jobs:
             if [ -f "$requirementsFile" ]; then
               echo "Processing $userDir's packages..."
 
-              echo "Installing packages individually for $userDir..."
-
+              # Install packages individually (so failures show per package)
               while read pkg; do
                 if [ ! -z "$pkg" ]; then
                   echo "Installing $pkg"
@@ -63,13 +62,23 @@ jobs:
                 fi
               done < "$requirementsFile"
 
-              echo "Generating dependency tree for $userDir..."
+              # Generate dependency tree
               pipdeptree --freeze > "$userDir/dependency_tree.txt" || true
 
-              echo "Downloading packages for $userDir..."
-              pip download -r "$requirementsFile" --dest=wheelhouse || echo "$requirementsFile download failed" >> failed_packages.txt
+              # Download packages individually, skip if already downloaded
+              while read pkg; do
+                if [ ! -z "$pkg" ]; then
+                  echo "Downloading $pkg..."
+                  pip download "$pkg" --dest=wheelhouse --exists-action=i || echo "$pkg download failed" >> failed_packages.txt
+                fi
+              done < "$requirementsFile"
 
-              pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse || echo "$userDir dependency download failed" >> failed_packages.txt
+              while read dep; do
+                if [ ! -z "$dep" ]; then
+                  echo "Downloading dependency $dep..."
+                  pip download "$dep" --dest=wheelhouse --exists-action=i || echo "$dep download failed" >> failed_packages.txt
+                fi
+              done < "$userDir/dependency_tree.txt"
             fi
           fi
         done
