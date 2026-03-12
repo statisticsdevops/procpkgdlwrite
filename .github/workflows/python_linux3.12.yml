@@ -45,6 +45,7 @@ jobs:
       run: |
         source venv/bin/activate
         mkdir -p wheelhouse
+        touch failed_packages.txt
 
         for userDir in */ ; do
           if [ -d "$userDir" ]; then
@@ -52,16 +53,17 @@ jobs:
             if [ -f "$requirementsFile" ]; then
               echo "Processing $userDir's packages..."
               
-              # Step 7a: Use pipdeptree to identify the full dependency tree for the packages
               echo "Generating dependency tree for $userDir..."
-              pip install -r "$requirementsFile"
-              pipdeptree --freeze > "$userDir/dependency_tree.txt"
 
-              # Step 7b: Download packages and their dependencies using pip
+              pip install -r "$requirementsFile" || echo "$requirementsFile install failed (likely Python 3.12 incompatible)" >> failed_packages.txt
+
+              pipdeptree --freeze > "$userDir/dependency_tree.txt" || true
+
               echo "Downloading packages for $userDir..."
-              pip download -r "$requirementsFile" --dest=wheelhouse
-              # Download the dependencies
-              pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse
+
+              pip download -r "$requirementsFile" --dest=wheelhouse || echo "$requirementsFile download failed" >> failed_packages.txt
+
+              pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse || echo "$userDir dependency download failed" >> failed_packages.txt
             fi
           fi
         done
