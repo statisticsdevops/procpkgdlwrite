@@ -19,16 +19,31 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Upgrade pip & wheel
+    - name: Create virtual environment
       run: |
+        python -m venv venv
+        source venv/bin/activate
+
+    - name: Upgrade packaging tools
+      run: |
+        source venv/bin/activate
         python -m pip install --upgrade pip setuptools wheel
+
+    - name: Install required packages
+      run: |
+        source venv/bin/activate
+        pip install pandas
+        pip install openpyxl
+        pip install pipdeptree
 
     - name: Split requirements based on users
       run: |
+        source venv/bin/activate
         python ./genpylinuxreq.py
 
     - name: Download packages dynamically based on user directories
       run: |
+        source venv/bin/activate
         mkdir -p wheelhouse
         touch failed_packages.txt
 
@@ -36,25 +51,19 @@ jobs:
           if [ -d "$userDir" ]; then
             requirementsFile="$userDir/requirements_pylinux.txt"
             if [ -f "$requirementsFile" ]; then
-              echo "Processing $userDir..."
+              echo "Processing $userDir's packages..."
 
-              # Download main packages
-              while read pkg; do
-                [ -z "$pkg" ] && continue
-                echo "Downloading $pkg..."
-                pip download "$pkg" --dest=wheelhouse --exists-action=i || echo "$pkg download failed" >> failed_packages.txt
-              done < "$requirementsFile"
+              echo "Generating dependency tree for $userDir..."
 
-              # Download dependencies using pipdeptree
-              pip install --upgrade pipdeptree >/dev/null 2>&1
-              pip install -r "$requirementsFile" >/dev/null 2>&1 || true
+              pip install -r "$requirementsFile" || echo "$requirementsFile install failed (likely Python 3.12 incompatible)" >> failed_packages.txt
+
               pipdeptree --freeze > "$userDir/dependency_tree.txt" || true
 
-              while read dep; do
-                [ -z "$dep" ] && continue
-                echo "Downloading dependency $dep..."
-                pip download "$dep" --dest=wheelhouse --exists-action=i || echo "$dep download failed" >> failed_packages.txt
-              done < "$userDir/dependency_tree.txt"
+              echo "Downloading packages for $userDir..."
+
+              pip download -r "$requirementsFile" --dest=wheelhouse --exists-action=i || echo "$requirementsFile download failed" >> failed_packages.txt
+
+              pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse --exists-action=i || echo "$userDir dependency download failed" >> failed_packages.txt
             fi
           fi
         done
@@ -65,7 +74,7 @@ jobs:
         name: python-linux-packages
         path: wheelhouse/
 
-    - name: Upload failed packages
+    - name: Upload failed packages report
       uses: actions/upload-artifact@v4
       with:
         name: failed-packages
