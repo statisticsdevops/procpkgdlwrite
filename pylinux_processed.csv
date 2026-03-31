@@ -1,7 +1,4 @@
 ﻿Package,User
-y-py,A
-ypy-websocket,B
-zict,C
-zipp,D
-zope-event,E
-zope-interface,F
+mmdc,A
+pyan3,B
+torch-geometric,C
