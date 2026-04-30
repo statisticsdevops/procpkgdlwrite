@@ -1,4 +1,4 @@
-name: Python Windows Setup
+name: Python Windows Updated 3.9 Setup
 
 on:
   workflow_dispatch:
