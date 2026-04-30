@@ -25,13 +25,13 @@ jobs:
 
     - name: Install minimal tools
       run: |
-        pip install pandas
+        pip install pandas openpyxl pipdeptree
 
     - name: Split requirements based on users
       run: |
         python ./genpylocalreq.py
 
-    - name: Download packages WITH dependencies (isolated per package)
+    - name: Download packages (flat wheelhouse, no deps)
       run: |
         mkdir wheelhouse
         if (Test-Path failed.txt) {
@@ -47,23 +47,22 @@ jobs:
             $packages = Get-Content $requirementsFile
 
             foreach ($pkg in $packages) {
-              if ($pkg.Trim() -ne "") {
+              $pkg = $pkg.Trim()
 
-                $pkgName = $pkg.Trim()
-                $pkgDir = "wheelhouse/$pkgName"
+              if ($pkg -ne "") {
 
-                mkdir $pkgDir -ErrorAction SilentlyContinue
+                echo "Downloading $pkg ..."
 
-                echo "Downloading $pkgName and its dependencies..."
-
-                pip download $pkgName `
-                  --dest $pkgDir `
+                pip download $pkg `
+                  --dest wheelhouse `
                   --only-binary=:all: `
+                  --no-deps `
                   --python-version 39 `
                   --platform win_amd64 `
                   --implementation cp `
                   --abi cp39 `
                 2>> failed.txt
+
               }
             }
           }
@@ -75,7 +74,7 @@ jobs:
         name: python-local-packages
         path: wheelhouse/
 
-    - name: Upload failure log (if any)
+    - name: Upload failed packages report
       if: always()
       uses: actions/upload-artifact@v4
       with:
