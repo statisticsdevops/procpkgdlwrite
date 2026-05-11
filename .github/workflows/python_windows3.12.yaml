@@ -1,0 +1,98 @@
+name: Python Windows 3.12 Setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Create virtual environment
+      shell: pwsh
+      run: |
+        if (Test-Path venv) {
+          Remove-Item -Recurse -Force venv
+        }
+
+        python -m venv venv
+
+    - name: Upgrade packaging tools
+      shell: pwsh
+      run: |
+        .\venv\Scripts\Activate.ps1
+        python -m pip install --upgrade pip setuptools wheel
+
+    - name: Install required packages
+      shell: pwsh
+      run: |
+        .\venv\Scripts\Activate.ps1
+        pip install pandas
+        pip install openpyxl
+        pip install pipdeptree
+
+    - name: Split requirements based on users
+      shell: pwsh
+      run: |
+        .\venv\Scripts\Activate.ps1
+        python ./genpylocalreq.py
+
+    - name: Download packages dynamically based on user directories
+      shell: pwsh
+      run: |
+        .\venv\Scripts\Activate.ps1
+
+        New-Item -ItemType Directory -Force -Path wheelhouse | Out-Null
+        New-Item -ItemType File -Force -Path failed_packages.txt | Out-Null
+
+        foreach ($userDir in Get-ChildItem -Directory) {
+          $requirementsFile = Join-Path $userDir.FullName "requirements_py.txt"
+
+          if (Test-Path $requirementsFile) {
+            Write-Host "Processing $($userDir.Name)'s packages..."
+
+            Write-Host "Generating dependency tree for $($userDir.Name)..."
+
+            pip install -r $requirementsFile
+            if ($LASTEXITCODE -ne 0) {
+              "$requirementsFile install failed likely Python 3.12 incompatible" | Out-File -Append failed_packages.txt
+            }
+
+            pipdeptree --freeze | Out-File "$($userDir.FullName)\dependency_tree.txt" -Encoding utf8
+
+            Write-Host "Downloading packages for $($userDir.Name)..."
+
+            pip download -r $requirementsFile --dest wheelhouse --exists-action i
+            if ($LASTEXITCODE -ne 0) {
+              "$requirementsFile download failed" | Out-File -Append failed_packages.txt
+            }
+
+            pip download -r "$($userDir.FullName)\dependency_tree.txt" --dest wheelhouse --exists-action i
+            if ($LASTEXITCODE -ne 0) {
+              "$($userDir.Name) dependency download failed" | Out-File -Append failed_packages.txt
+            }
+          }
+        }
+
+    - name: Upload wheelhouse
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-windows-312-local-packages
+        path: wheelhouse/
+
+    - name: Upload failed packages report
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-packages-windows
+        path: failed_packages.txt
