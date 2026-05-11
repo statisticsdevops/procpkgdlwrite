@@ -38,9 +38,7 @@ jobs:
       shell: pwsh
       run: |
         .\venv\Scripts\Activate.ps1
-        pip install pandas
-        pip install openpyxl
-        pip install pipdeptree
+        pip install pandas openpyxl pipdeptree
 
     - name: Split requirements based on users
       shell: pwsh
@@ -62,26 +60,28 @@ jobs:
           if (Test-Path $requirementsFile) {
             Write-Host "Processing $($userDir.Name)'s packages..."
 
+            foreach ($line in Get-Content $requirementsFile) {
+              $pkg = $line.Trim()
+
+              if ($pkg -and -not $pkg.StartsWith("#")) {
+                Write-Host "Downloading $pkg"
+
+                pip download $pkg --dest wheelhouse --exists-action i
+
+                if ($LASTEXITCODE -ne 0) {
+                  "$($userDir.Name): $pkg download failed or incompatible with Python 3.12 Windows" | Out-File -Append failed_packages.txt
+                }
+              }
+            }
+
             Write-Host "Generating dependency tree for $($userDir.Name)..."
 
             pip install -r $requirementsFile
             if ($LASTEXITCODE -ne 0) {
-              "$requirementsFile install failed likely Python 3.12 incompatible" | Out-File -Append failed_packages.txt
+              "$($userDir.Name): full install failed, dependency tree may be incomplete" | Out-File -Append failed_packages.txt
             }
 
             pipdeptree --freeze | Out-File "$($userDir.FullName)\dependency_tree.txt" -Encoding utf8
-
-            Write-Host "Downloading packages for $($userDir.Name)..."
-
-            pip download -r $requirementsFile --dest wheelhouse --exists-action i
-            if ($LASTEXITCODE -ne 0) {
-              "$requirementsFile download failed" | Out-File -Append failed_packages.txt
-            }
-
-            pip download -r "$($userDir.FullName)\dependency_tree.txt" --dest wheelhouse --exists-action i
-            if ($LASTEXITCODE -ne 0) {
-              "$($userDir.Name) dependency download failed" | Out-File -Append failed_packages.txt
-            }
           }
         }
 
