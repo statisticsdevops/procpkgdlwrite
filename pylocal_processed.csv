@@ -1,30 +1,18 @@
 Package,User
-auto-sklearn,A
-autocfg,B
-autogl,C
-autogluon-common,D
-autogluon-contrib-nlp,E
-autogluon-multimodal,F
-autogluon-text,G
-autogluon-timeseries,H
-autograd,I
-autograd-gamma,J
-automat,K
-autopage,L
-autopep8,M
-autopytorch,N
-autoscraper,O
-aws-cdk-aws-autoscaling-common,P
-aws-cdk-aws-cloudwatch,Q
-aws-cdk-aws-codeguruprofiler,R
-aws-cdk-aws-codestarnotifications,S
-aws-cdk-aws-ec2,T
-aws-cdk-aws-ecr,U
-aws-cdk-aws-ecr-assets,V
-aws-cdk-aws-efs,W
-aws-cdk-aws-iam,X
-aws-cdk-aws-kms,Y
-aws-cdk-aws-logs,Z
+deepeval,A
+orange3,B
+tempdisagg,C
+pdflatex,D
+xelatex,E
+weasyprint,F
+Pyppeteer,G
+dash-extensions==2.0.5,H
+dash==4.1.0,H
+dash-bootstrap-components==2.0.4,H
+name_matching,I
+ragas,J
+area-ai,K
+rank_bm25,L
 
 
 
