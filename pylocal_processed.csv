@@ -10,6 +10,7 @@ dash-bootstrap-components==2.0.4,H
 name_matching,I
 ragas,J
 ares-ai,K
+spacy==3.7.5,K
 rank_bm25,L
 
 
