@@ -9,7 +9,7 @@ dash==4.1.0,H
 dash-bootstrap-components==2.0.4,H
 name_matching,I
 ragas,J
-area-ai,K
+ares-ai,K
 rank_bm25,L
 
 
