@@ -19,49 +19,66 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Create virtual environment
+    - name: Upgrade packaging tools
       run: |
-        if (Test-Path venv) {
-          Remove-Item -Recurse -Force venv
-        }
-        python -m venv venv
-        .\venv\Scripts\activate
+        python -m pip install --upgrade pip setuptools wheel
 
-    - name: Force reinstall pip
+    - name: Install required packages for script
       run: |
-        .\venv\Scripts\activate
-        python -m pip install --upgrade pip
-
-    - name: Install required packages
-      run: |
-        .\venv\Scripts\activate
-        pip install pandas
-        pip install openpyxl
-        pip install pipdeptree
+        pip install pandas openpyxl pipdeptree
 
     - name: Split requirements based on users
       run: |
-        .\venv\Scripts\activate
         python ./genpylocalreq.py
 
     - name: Download packages dynamically based on user directories
+      shell: pwsh
       run: |
-        .\venv\Scripts\activate
-        mkdir wheelhouse
+        New-Item -ItemType Directory -Force -Path wheelhouse | Out-Null
+        New-Item -ItemType File -Force -Path failed_packages.txt | Out-Null
 
         foreach ($userDir in Get-ChildItem -Directory) {
-          $requirementsFile = "$userDir/requirements_py.txt"
-          if (Test-Path $requirementsFile) {
-            echo "Processing $userDir's packages..."
-            
-            echo "Generating dependency tree for $userDir..."
-            pip install -r $requirementsFile
-            pipdeptree --freeze > "$userDir/dependency_tree.txt"
+          $requirementsFile = Join-Path $userDir.FullName "requirements_py.txt"
 
-            echo "Downloading packages for $userDir..."
-            pip download -r $requirementsFile --dest=wheelhouse
-            # Download the dependencies
-            pip download -r "$userDir/dependency_tree.txt" --dest=wheelhouse
+          if (Test-Path $requirementsFile) {
+            Write-Host "======================================"
+            Write-Host "Processing $($userDir.Name)"
+            Write-Host "Using requirements file: $requirementsFile"
+            Write-Host "======================================"
+
+            $venvName = "venv_$($userDir.Name)"
+
+            if (Test-Path $venvName) {
+              Remove-Item -Recurse -Force $venvName
+            }
+
+            python -m venv $venvName
+            & ".\$venvName\Scripts\Activate.ps1"
+
+            python -m pip install --upgrade pip setuptools wheel pipdeptree
+
+            Write-Host "Downloading packages and dependencies..."
+
+            pip download -r $requirementsFile --dest=wheelhouse --exists-action=i
+
+            if ($LASTEXITCODE -eq 0) {
+              Write-Host "$requirementsFile download successful"
+
+              Write-Host "Installing packages only to generate dependency tree..."
+              pip install -r $requirementsFile
+
+              if ($LASTEXITCODE -eq 0) {
+                pipdeptree --freeze | Out-File "$($userDir.FullName)\dependency_tree.txt" -Encoding utf8
+              } else {
+                "$requirementsFile install failed, dependency tree not generated" | Out-File failed_packages.txt -Append -Encoding utf8
+              }
+            } else {
+              "$requirementsFile download failed" | Out-File failed_packages.txt -Append -Encoding utf8
+            }
+
+            deactivate
+
+            Remove-Item -Recurse -Force $venvName
           }
         }
 
@@ -70,3 +87,9 @@ jobs:
       with:
         name: python-local-packages
         path: wheelhouse/
+
+    - name: Upload failed packages report
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-packages
+        path: failed_packages.txt
