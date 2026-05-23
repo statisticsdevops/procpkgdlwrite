@@ -5,11 +5,11 @@ tempdisagg,C
 pdflatex,D
 weasyprint,F
 Pyppeteer,G
+dash-extensions==2.0.5,H
 dash==4.1.0,H
 dash-bootstrap-components==2.0.4,H
 name_matching,I
 ragas,J
 ares-ai,K
-spacy==3.7.5,K
 rank_bm25,L
 
