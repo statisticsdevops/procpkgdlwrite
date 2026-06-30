@@ -2,6 +2,7 @@
 ipydatagrid,A
 ipynbname,B
 nbdime,C
+vowl,D
 office365,G
 adjustText,H
 pytorch_tabnet==4.1.0,I
