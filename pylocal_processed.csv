@@ -1,6 +1,17 @@
 Package,User
-playwright,A
-notebook-as-pdf,B
+ipydatagrid,A
+ipynbname,B
+nbdime,C
+meta-evaluator,D
+vowl,E
+pytorch,F
+office365,G
+adjustText,H
+pytorch_tabnet,I
+torch==2.6.0,J
+nvidia-cusparse-cu12,J
+jupyter-scheduler,K
+
 
 
 
