@@ -1,23 +1,6 @@
 ﻿Package,User
-parquetize,A
-openxlsx,B
-nanoparquet,C
-gdata,D
-encryptr,E
-arrow,F
-mfp,G
-srvyr,H
-MatchIt,I
-x13binary,J
-did,K
-patchwork,L
-cobalt,M
-optmatch,N
-rlemon,O
-cem,P
-kable,Q
-kableExtra,R
-openxlsx2,S
+openxlsx2,A
+
 
 
 
