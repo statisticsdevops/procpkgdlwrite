@@ -2,12 +2,7 @@
 jinja2,A
 omegaconf,B
 SQLAlchemy,C
-py-pglite,G
-py-pglite[sqlalchemy],H
-sphinx,I
 removestar,J
-sphinx-autodoc-typehints,J
-shibuya,K
 python-louvain,L
 leidenalg,M
 
