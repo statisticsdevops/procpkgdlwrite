@@ -1,12 +1,13 @@
 ﻿Package,User
-ipydatagrid,A
-ipynbname,B
-nbdime,C
-vowl,D
-office365,G
-adjustText,H
-pytorch_tabnet==4.1.0,I
-torch==2.6.0,J
-nvidia-cusparse-cu12,J
-jupyter-scheduler,K
+jinja2,A
+omegaconf,B
+SQLAlchemy,C
+py-pglite,G
+py-pglite[sqlalchemy],H
+sphinx,I
+removestar,J
+sphinx-autodoc-typehints,J
+shibuya,K
+python-louvain,L
+leidenalg,M
 
