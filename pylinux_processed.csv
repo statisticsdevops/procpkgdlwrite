@@ -1,8 +1,5 @@
 ﻿Package,User
-jinja2,A
-omegaconf,B
-SQLAlchemy,C
-removestar,J
-python-louvain,L
-leidenalg,M
+polars_io,A
+svy,B
+
 
