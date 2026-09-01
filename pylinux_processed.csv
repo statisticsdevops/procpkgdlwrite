@@ -2,7 +2,6 @@
 charset_normalizer,B
 triton==3.4.0,C
 jupyter-sphinx,D
-dataframely,G
 docx2pdf,I
 pypandoc,J
 
