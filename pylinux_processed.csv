@@ -1,15 +1,10 @@
 ﻿Package,User
-chardet,A
 charset_normalizer,B
 triton==3.4.0,C
 jupyter-sphinx,D
-sphinx-gallery,E
 pointblank,F
 dataframely,G
-pgembed,H
 docx2pdf,I
 pypandoc,J
-myst-parser,K
-prefect,L
 
 
