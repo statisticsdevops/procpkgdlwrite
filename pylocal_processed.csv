@@ -1,5 +1,11 @@
 Package,User
-polars_io,A
+charset_normalizer,B
+triton==3.4.0,C
+jupyter-sphinx,D
+pointblank,F
+dataframely,G
+docx2pdf,I
+pypandoc,J
 
 
 
